@@ -1,0 +1,28 @@
+on:
+  push:
+    branches:
+      - main
+    paths: 
+      - '.github/workflows/bicep.deploy.yml'
+      - 'infra/**'
+jobs:
+  build-and-provision:
+    name: 'provision infra with bicep'
+    runs-on: ubuntu-latest
+    defaults:
+      run: 
+        shell: bash
+    steps:
+      - name: "checkout"
+        uses: actions/checkout@v2.1.0
+
+      - name: az login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZCLI_CREDS }}
+      - name: provision with az cli
+        working-directory: infra
+        run: |
+          az deployment sub create -f main.bicep \    
+      - name: logout
+        run: az logout
